@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fishing App</title>
+    <title>Fishing App Pro</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
@@ -15,10 +15,9 @@
         .topbar {
             position: sticky;
             top: 0;
-            background: rgba(15, 23, 32, 0.9);
+            background: rgba(15,23,32,0.9);
             backdrop-filter: blur(10px);
             padding: 14px;
-            font-size: 18px;
             font-weight: bold;
             display: flex;
             justify-content: space-between;
@@ -26,16 +25,17 @@
         }
 
         .pill {
-            font-size: 12px;
-            padding: 5px 10px;
             background: #1aa3ff;
+            padding: 5px 10px;
             border-radius: 20px;
+            font-size: 12px;
         }
 
         .container {
             padding: 12px;
             max-width: 900px;
             margin: auto;
+            padding-bottom: 80px;
         }
 
         .card {
@@ -46,14 +46,9 @@
             border: 1px solid rgba(255,255,255,0.06);
         }
 
-        h2 {
-            font-size: 16px;
-            margin: 0 0 10px 0;
-        }
-
         iframe {
             width: 100%;
-            height: 280px;
+            height: 260px;
             border: none;
             border-radius: 10px;
         }
@@ -66,7 +61,6 @@
             border: none;
             background: #1b2633;
             color: white;
-            outline: none;
         }
 
         button {
@@ -83,56 +77,108 @@
         .log {
             margin-top: 10px;
             font-size: 14px;
-            opacity: 0.9;
             line-height: 1.5;
+            opacity: 0.9;
         }
+
+        /* BOTTOM NAV */
+        .nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(15,23,32,0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .nav button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 12px;
+        }
+
+        .hidden { display: none; }
     </style>
 </head>
 
 <body>
 
 <div class="topbar">
-    🎣 Fishing App
+    🎣 Fishing Pro App
     <div class="pill">LIVE</div>
 </div>
 
 <div class="container">
 
-    <div class="card">
-        <h2>🌬️ Wind Radar</h2>
-        <iframe src="https://embed.windy.com/embed2.html?lat=-27.47&lon=153.02&zoom=7&level=surface&overlay=wind"></iframe>
+    <!-- DASHBOARD -->
+    <div id="dashboard">
+
+        <div class="card">
+            <h3>🌬️ Wind Radar</h3>
+            <iframe src="https://embed.windy.com/embed2.html?lat=-27.47&lon=153.02&zoom=7&level=surface&overlay=wind"></iframe>
+        </div>
+
+        <div class="card">
+            <h3>📊 Fishing Score</h3>
+            <div id="score">Loading...</div>
+        </div>
+
+        <div class="card">
+            <h3>🌊 Marine Conditions</h3>
+            <div id="marine">Loading ocean data...</div>
+        </div>
+
     </div>
 
-    <div class="card">
-        <h2>⚡ Fishing Tips</h2>
-        <p>
-            🌊 Rising tide = best fishing<br>
-            🌤️ Cloudy + wind = better bite<br>
-            🌅 Dawn & dusk = peak time
-        </p>
+    <!-- MAP -->
+    <div id="map" class="hidden">
+        <div class="card">
+            <h3>📍 Spots</h3>
+            <iframe src="https://www.google.com/maps?q=balmoral+beach+sydney&output=embed"></iframe>
+        </div>
     </div>
 
-    <div class="card">
-        <h2>📍 Fishing Map</h2>
-        <iframe src="https://www.google.com/maps?q=balmoral+beach+sydney&output=embed"></iframe>
-    </div>
+    <!-- LOG -->
+    <div id="logpage" class="hidden">
+        <div class="card">
+            <h3>🎣 Catch Log</h3>
 
-    <div class="card">
-        <h2>🎣 Catch Log</h2>
+            <input id="fish" placeholder="Fish (e.g. Tailor)">
+            <input id="spot" placeholder="Spot (e.g. Balmoral)">
 
-        <input id="fish" placeholder="Fish (e.g. Tailor)">
-        <input id="spot" placeholder="Spot (e.g. Balmoral)">
+            <button onclick="addCatch()">Add Catch</button>
 
-        <button onclick="addCatch()">Add Catch</button>
-
-        <div id="log" class="log"></div>
+            <div id="log" class="log"></div>
+        </div>
     </div>
 
 </div>
 
-<script>
-let catches = [];
+<!-- NAV -->
+<div class="nav">
+    <button onclick="show('dashboard')">Dashboard</button>
+    <button onclick="show('map')">Map</button>
+    <button onclick="show('logpage')">Log</button>
+</div>
 
+<script>
+
+let catches = JSON.parse(localStorage.getItem("catches") || "[]");
+
+function show(page) {
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("map").classList.add("hidden");
+    document.getElementById("logpage").classList.add("hidden");
+
+    document.getElementById(page).classList.remove("hidden");
+}
+
+/* SAVE CATCHES */
 function addCatch() {
     const fish = document.getElementById("fish").value;
     const spot = document.getElementById("spot").value;
@@ -140,10 +186,50 @@ function addCatch() {
     if (!fish || !spot) return;
 
     catches.push({ fish, spot });
+    localStorage.setItem("catches", JSON.stringify(catches));
 
+    renderLog();
+}
+
+function renderLog() {
     document.getElementById("log").innerHTML =
         catches.map(c => `🐟 ${c.fish} — 📍 ${c.spot}`).join("<br>");
 }
+
+renderLog();
+
+/* MARINE DATA (real API, no key needed) */
+async function loadMarine() {
+    try {
+        const res = await fetch("https://marine-api.open-meteo.com/v1/marine?latitude=-27.47&longitude=153.03&hourly=wave_height");
+        const data = await res.json();
+
+        const wave = data.hourly.wave_height[0];
+
+        document.getElementById("marine").innerHTML =
+            `🌊 Wave height: ${wave} m`;
+    } catch {
+        document.getElementById("marine").innerHTML =
+            "Marine data unavailable";
+    }
+}
+
+/* SIMPLE FISHING SCORE */
+function calcScore() {
+    const hour = new Date().getHours();
+
+    let score = 50;
+
+    if (hour >= 5 && hour <= 9) score += 30; // dawn
+    if (hour >= 16 && hour <= 19) score += 30; // dusk
+
+    document.getElementById("score").innerHTML =
+        `🔥 Today’s fishing score: ${score}/100`;
+}
+
+loadMarine();
+calcScore();
+
 </script>
 
 </body>
