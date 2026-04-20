@@ -12,7 +12,6 @@
             color: white;
         }
 
-        /* TOP APP BAR */
         .topbar {
             position: sticky;
             top: 0;
@@ -33,17 +32,14 @@
             border-radius: 20px;
         }
 
-        /* LAYOUT */
         .container {
             padding: 12px;
             max-width: 900px;
             margin: auto;
         }
 
-        /* CARDS */
         .card {
             background: #121a24;
-            border: 1px solid rgba(255,255,255,0.06);
             border-radius: 14px;
             padding: 12px;
             margin-bottom: 12px;
@@ -51,7 +47,6 @@
 
         h2 {
             font-size: 16px;
-            margin: 0 0 10px 0;
         }
 
         iframe {
@@ -61,7 +56,6 @@
             border-radius: 10px;
         }
 
-        /* INPUTS */
         input {
             width: 100%;
             padding: 10px;
@@ -70,7 +64,6 @@
             border: none;
             background: #1b2633;
             color: white;
-            outline: none;
         }
 
         button {
@@ -84,35 +77,9 @@
             font-weight: bold;
         }
 
-        button:active {
-            transform: scale(0.98);
-        }
-
         .log {
             font-size: 14px;
-            line-height: 1.6;
-            opacity: 0.9;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-
-        .tab {
-            flex: 1;
-            text-align: center;
-            padding: 8px;
-            border-radius: 10px;
-            background: #121a24;
-            font-size: 13px;
-            border: 1px solid rgba(255,255,255,0.06);
-        }
-
-        .small {
-            font-size: 12px;
-            opacity: 0.7;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -126,44 +93,28 @@
 
 <div class="container">
 
-    <!-- TABS -->
-    <div class="tabs">
-        <div class="tab">Dashboard</div>
-        <div class="tab">Map</div>
-        <div class="tab">Log</div>
-    </div>
-
-    <!-- WEATHER CARD -->
     <div class="card">
         <h2>🌬️ Wind Radar</h2>
         <iframe src="https://embed.windy.com/embed2.html?lat=-27.47&lon=153.02&zoom=7&level=surface&overlay=wind"></iframe>
-        <div class="small">Wind conditions for fishing</div>
     </div>
 
-    <!-- QUICK TIPS -->
     <div class="card">
         <h2>⚡ Fishing Tip</h2>
-        <div class="small">
-            • Rising tide = baitfish move in<br>
-            • Cloudy + wind = better bite<br>
-            • Dawn & dusk = peak time 🎣
-        </div>
+        <p>Rising tide = better fishing 🎣</p>
     </div>
 
-    <!-- MAP -->
     <div class="card">
-        <h2>📍 Spot Map</h2>
+        <h2>📍 Map</h2>
         <iframe src="https://www.google.com/maps?q=balmoral+beach+sydney&output=embed"></iframe>
     </div>
 
-    <!-- LOG -->
     <div class="card">
         <h2>🎣 Catch Log</h2>
 
-        <input id="fish" placeholder="Fish (e.g. Tailor)">
-        <input id="spot" placeholder="Spot (e.g. Balmoral)">
+        <input id="fish" placeholder="Fish">
+        <input id="spot" placeholder="Spot">
 
-        <button onclick="addCatch()">Add Catch</button>
+        <button onclick="addCatch()">Add</button>
 
         <div id="log" class="log"></div>
     </div>
