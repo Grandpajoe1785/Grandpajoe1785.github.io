@@ -230,7 +230,57 @@ function calcScore() {
 loadMarine();
 calcScore();
 
-</script>
+</script<script>
+
+let catches = JSON.parse(localStorage.getItem("catches") || "[]");
+
+function show(page) {
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("map").classList.add("hidden");
+    document.getElementById("logpage").classList.add("hidden");
+
+    document.getElementById(page).classList.remove("hidden");
+}
+
+/* SAVE CATCHES */
+function addCatch() {
+    const fish = document.getElementById("fish").value;
+    const spot = document.getElementById("spot").value;
+
+    if (!fish || !spot) return;
+
+    catches.push({ fish, spot });
+    localStorage.setItem("catches", JSON.stringify(catches));
+
+    renderLog();
+}
+
+function renderLog() {
+    document.getElementById("log").innerHTML =
+        catches.map(c => `🐟 ${c.fish} — 📍 ${c.spot}`).join("<br>");
+}
+
+renderLog();
+
+/* 🌊 SYDNEY TIDE DATA (NOAA proxy – works globally) */
+let tideTrend = "unknown";
+
+async function loadTide() {
+    try {
+        const res = await fetch("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?product=water_level&date=latest&station=9414290&datum=MLLW&units=metric&time_zone=lst&format=json");
+        const data = await res.json();
+
+        if (data.data && data.data.length > 1) {
+            const now = parseFloat(data.data[0].v);
+            const prev = parseFloat(data.data[1].v);
+
+            tideTrend = now > prev ? "rising" : "falling";
+
+            document.getElementById("tide").innerHTML =
+                `🌊 Tide: ${now.toFixed(2)}m (${tideTrend})`;
+        } else {
+            document.getElementById("tide").innerHTML =
+                "🌊 Tide>
 
 </body>
 </html>
